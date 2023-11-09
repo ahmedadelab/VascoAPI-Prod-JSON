@@ -9,7 +9,8 @@ namespace VascoAPI
         {
             var MyConfig = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             var url = MyConfig.GetValue<string>("AppSettings:URL");
-            X509Certificate Cert = X509Certificate.CreateFromCertFile("C:\\temp\\PDUATOASIDKV01.eg.albaraka.crt");
+            var Cert1 = MyConfig.GetValue<string>("AppSettings:Cert");
+            X509Certificate Cert = X509Certificate.CreateFromCertFile(Cert1);
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
             //webRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             webRequest.Headers.Add(@"SOAP:Action");

@@ -12,7 +12,7 @@ namespace VascoAPI
             var Cert1 = MyConfig.GetValue<string>("AppSettings:Cert");
             X509Certificate Cert = X509Certificate.CreateFromCertFile(Cert1);
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
-            //webRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+            webRequest.ClientCertificates.Add(Cert);
             webRequest.Headers.Add(@"SOAP:Action");
             webRequest.ContentType = "text/xml;charset=\"utf-8\"";
             webRequest.Accept = "text/xml";

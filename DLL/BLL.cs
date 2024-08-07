@@ -83,7 +83,7 @@ namespace VascoAPI
                 XmlDocument soapEnvelopeXml = new XmlDocument();
                 XmlDocument XDoc = new XmlDocument();
                 HttpWebRequest request = HTTPs.CreateWebRequest();
-                string Req = @"<soapenv:Envelope
+            soapEnvelopeXml.LoadXml(@"<soapenv:Envelope
 xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/""
 xmlns:xsd=""http://www.w3.org/2001/XMLSchema""
 xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
@@ -93,7 +93,7 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
 	<aut:authUser>
 	<credentialAttributeSet>
 		<attributes>
-		<value xsi:type=""xsd:string"">"+ CREDFLD_USERID + @"</value>
+		<value xsi:type=""xsd:string"">" + CREDFLD_USERID + @"</value>
 		<attributeID>CREDFLD_USERID</attributeID>
 		</attributes>
 		<attributes>
@@ -120,9 +120,9 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
 	</aut:authUser>
    </soapenv:Body>
 </soapenv:Envelope>
-";
+");
 
-                soapEnvelopeXml.LoadXml(Req);
+            //    soapEnvelopeXml.LoadXml(Req);
                 using (Stream stream = request.GetRequestStream())
                 {
                     soapEnvelopeXml.Save(stream);

@@ -133,12 +133,12 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                     {
                         soapResult = rd.ReadToEnd();
 
-                       strr = (string)XElement.Parse(soapResult);
-                    Console.WriteLine(strr.ToString());
+                   //    strr = (string)XElement.Parse(soapResult);
+                //    Console.WriteLine(strr.ToString());
                         XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(soapResult);
                     XmlSerializer serializer = new XmlSerializer(typeof(SVascoResp.Body));
-                    using (StringReader reader = new StringReader(strr))
+                    using (StringReader reader = new StringReader(soapResult))
                     {
                         SVascoResp.Body body = (SVascoResp.Body)serializer.Deserialize(reader);
 

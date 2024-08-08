@@ -133,9 +133,8 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                         XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(soapResult);
                     XmlSerializer serializer = new XmlSerializer(typeof(AuthUserResponse));
-                    using (StringReader reader = new StringReader(soapResult))
-                    {
-                        AuthUserResponse responsexml = (AuthUserResponse)serializer.Deserialize(reader);
+                
+                        AuthUserResponse responsexml = (AuthUserResponse)serializer.Deserialize(rd);
                         var SReturnCode = responsexml.AuthUserResults.Results.ResultCodes.ReturnCode;
                         var SstatusCode = responsexml.AuthUserResults.Results.ResultCodes.StatusCode;
                         var SReturnCodeEnum = responsexml.AuthUserResults.Results.ResultCodes.ReturnCodeEnum;
@@ -144,7 +143,7 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                         var SErrorCode = responsexml.AuthUserResults.Results.ErrorStack.Errors.ErrorCode;
 
                         jsonString = JsonConvert.SerializeObject(ReturnJsonRespone(SReturnCodeEnum,statusCodeEnum, SReturnCode.ToString(),SstatusCode.ToString(),SErrorCode.ToString(),SErrorDesc), Newtonsoft.Json.Formatting.Indented);
-                    }
+                   
                  
 
             }

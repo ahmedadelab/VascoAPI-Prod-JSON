@@ -134,6 +134,7 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                         soapResult = rd.ReadToEnd();
 
                        strr = (string)XElement.Parse(soapResult);
+                    Console.WriteLine(strr.ToString());
                         XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(soapResult);
                     XmlSerializer serializer = new XmlSerializer(typeof(SVascoResp.Body));

@@ -64,6 +64,12 @@ namespace VascoAPI
                     CREDFLD_ORGANIZATIONAL_UNIT = Value;
                 }
             }
+
+            if(CREDFLD_COMPONENT_TYPE == "Corpay")
+            {
+                CREDFLD_DOMAIN = "corporate";
+                CREDFLD_ORGANIZATIONAL_UNIT = "corpay";
+            }
                 string RequestID = "MW-Vasco-" + CREDFLD_USERID + "-" + DateTime.Now.ToString("ddMMyyyyHHmmssfff");
                 string Request = JsonConvert.SerializeObject(new
                 {
@@ -129,20 +135,25 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                     {
                         soapResult = rd.ReadToEnd();
 
-      
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(soapResult);
-                    XmlSerializer serializer = new XmlSerializer(typeof(AuthUserResponse));
-                
-                        AuthUserResponse responsexml = (AuthUserResponse)serializer.Deserialize(rd);
-                        var SReturnCode = responsexml.AuthUserResults.Results.ResultCodes.ReturnCode;
-                        var SstatusCode = responsexml.AuthUserResults.Results.ResultCodes.StatusCode;
-                        var SReturnCodeEnum = responsexml.AuthUserResults.Results.ResultCodes.ReturnCodeEnum;
-                        var statusCodeEnum = responsexml.AuthUserResults.Results.ResultCodes.StatusCodeEnum;
-                        var SErrorDesc = responsexml.AuthUserResults.Results.ErrorStack.Errors.ErrorDesc;
-                        var SErrorCode = responsexml.AuthUserResults.Results.ErrorStack.Errors.ErrorCode;
+                    var str = XElement.Parse(soapResult);
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(soapResult);
 
-                        jsonString = JsonConvert.SerializeObject(ReturnJsonRespone(SReturnCodeEnum,statusCodeEnum, SReturnCode.ToString(),SstatusCode.ToString(),SErrorCode.ToString(),SErrorDesc), Newtonsoft.Json.Formatting.Indented);
+                    XmlNodeList EReturnCode = xmlDoc.GetElementsByTagName("returnCode");
+                    var SReturnCode = EReturnCode[0]?.InnerXml;
+                   XmlNodeList EstatusCode = xmlDoc.GetElementsByTagName("statusCode");
+                    var SstatusCode = EstatusCode[0]?.InnerXml;
+                    XmlNodeList EreturnCodeEnum = xmlDoc.GetElementsByTagName("returnCodeEnum");
+                    var SReturnCodeEnum = EreturnCodeEnum[0]?.InnerXml;
+                    XmlNodeList EstatusCodeEnum = xmlDoc.GetElementsByTagName("statusCodeEnum");
+                    var SstatusCodeEnum = EstatusCodeEnum[0]?.InnerXml;
+                    XmlNodeList EerrorCode = xmlDoc.GetElementsByTagName("errorCode");
+                    var SerrorCode = EerrorCode[0]?.InnerXml;
+                    XmlNodeList EerrorDesc = xmlDoc.GetElementsByTagName("errorDesc");
+                    var SerrorDesc = EerrorDesc[0]?.InnerXml;
+
+
+                    jsonString = ReturnJsonRespone(SReturnCodeEnum,SstatusCodeEnum, SReturnCode.ToString(),SstatusCode.ToString(),SerrorCode.ToString(),SerrorDesc);
                    
                  
 
@@ -182,7 +193,7 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                     }
                 }
             };
-            return root.ToString();
+            return JsonConvert.SerializeObject(root, Newtonsoft.Json.Formatting.Indented);
         }
         public string Vasco(string Req)
         {

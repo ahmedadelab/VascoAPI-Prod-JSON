@@ -4,13 +4,7 @@ namespace VascoAPI
 {
     public class SVascoResp
     {
-        [XmlRoot(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
-        public class Body
-        {
-            [XmlElement(ElementName = "authUserResponse", Namespace = "http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authen")]
-            public AuthUserResponse AuthUserResponse { get; set; }
-        }
-
+        [XmlRoot(ElementName = "authUserResponse", Namespace = "http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication")]
         public class AuthUserResponse
         {
             [XmlElement(ElementName = "authUserResults")]
@@ -52,19 +46,19 @@ namespace VascoAPI
 
         public class CredentialAttributeSet
         {
-            // Define properties as needed
+            // Define properties for credential attributes if needed
         }
 
         public class ErrorStack
         {
             [XmlElement(ElementName = "errors")]
-            public List<Error> Errors { get; set; }
+            public Error Errors { get; set; }
         }
 
         public class Error
         {
             [XmlElement(ElementName = "errorCode")]
-            public string ErrorCode { get; set; }
+            public int ErrorCode { get; set; }
 
             [XmlElement(ElementName = "errorDesc")]
             public string ErrorDesc { get; set; }

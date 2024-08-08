@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Xml.Serialization;
 using Microsoft.AspNetCore.Http;
+using static VascoAPI.SVascoResp;
 
 namespace VascoAPI
 {
@@ -19,13 +20,8 @@ namespace VascoAPI
         {
             string jsonString = string.Empty;
   
-            string? ReturnCodeEnum = string.Empty;
-            string? StatusCodeEnum = string.Empty;
-            string? SReturnCode = string.Empty;
-            string? SStatusCode = string.Empty;
-            string strr = string.Empty;
-            string? ErrorCode = string.Empty;
-            string? ErrorDesc = string.Empty;
+
+
             string? soapResult = string.Empty;
             string? CREDFLD_USERID = string.Empty;
             string? CREDFLD_PASSWORD_FORMAT = string.Empty;
@@ -133,53 +129,21 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
                     {
                         soapResult = rd.ReadToEnd();
 
-                   //    strr = (string)XElement.Parse(soapResult);
-                //    Console.WriteLine(strr.ToString());
+      
                         XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(soapResult);
-                    XmlSerializer serializer = new XmlSerializer(typeof(SVascoResp.Body));
+                    XmlSerializer serializer = new XmlSerializer(typeof(AuthUserResponse));
                     using (StringReader reader = new StringReader(soapResult))
                     {
-                        SVascoResp.Body body = (SVascoResp.Body)serializer.Deserialize(reader);
+                        AuthUserResponse responsexml = (AuthUserResponse)serializer.Deserialize(reader);
+                        var SReturnCode = responsexml.AuthUserResults.Results.ResultCodes.ReturnCode;
+                        var SstatusCode = responsexml.AuthUserResults.Results.ResultCodes.StatusCode;
+                        var SReturnCodeEnum = responsexml.AuthUserResults.Results.ResultCodes.ReturnCodeEnum;
+                        var statusCodeEnum = responsexml.AuthUserResults.Results.ResultCodes.StatusCodeEnum;
+                        var SErrorDesc = responsexml.AuthUserResults.Results.ErrorStack.Errors.ErrorDesc;
+                        var SErrorCode = responsexml.AuthUserResults.Results.ErrorStack.Errors.ErrorCode;
 
-                        var resultCodes = body.AuthUserResponse.AuthUserResults.Results.ResultCodes;
-                        ReturnCodeEnum = resultCodes.ReturnCodeEnum;
-                        StatusCodeEnum = resultCodes.StatusCodeEnum;
-                        SReturnCode = Convert.ToString(resultCodes.ReturnCode);
-                        SStatusCode = Convert.ToString(resultCodes.StatusCode);
-
-                        foreach (var error in body.AuthUserResponse.AuthUserResults.Results.ErrorStack.Errors)
-                        {
-                            ErrorCode = error.ErrorCode;
-                            ErrorDesc = error.ErrorDesc;
-                        }
-
-                       var root = new Root
-                        {
-                            Results = new SVASCOJSON.Results
-                            {
-                                ResultCodes = new ResultCodes
-                                {
-                                    ReturnCodeEnum = ReturnCodeEnum,
-                                    StatusCodeEnum = StatusCodeEnum,
-                                    ReturnCode = SReturnCode,
-                                    StatusCode = SStatusCode
-                                },
-                                ErrorStack = new ErrorStack
-                                {
-                                    Errors = new List<Error>
-                    {
-                        new Error
-                        {
-                            ErrorCode = ErrorCode,
-                            ErrorDesc = ErrorDesc
-                        }
-                    }
-
-                                }
-                            }
-                        };
-                        jsonString = JsonConvert.SerializeObject(root, Newtonsoft.Json.Formatting.Indented);
+                        jsonString = JsonConvert.SerializeObject(ReturnJsonRespone(SReturnCodeEnum,statusCodeEnum, SReturnCode.ToString(),SstatusCode.ToString(),SErrorCode.ToString(),SErrorDesc), Newtonsoft.Json.Formatting.Indented);
                     }
                  
 
@@ -189,6 +153,37 @@ xmlns:aut=""http://www.vasco.com/IdentikeyServer/IdentikeyTypes/Authentication""
             
 
            return jsonString;
+        }
+
+        public string ReturnJsonRespone(string ReturnCodeEnum,string StatusCodeEnum,string SReturnCode,string SStatusCode,string ErrorCode,string ErrorDesc)
+        {
+
+            var root = new Root
+            {
+                Results = new SVASCOJSON.Results
+                {
+                    ResultCodes = new SVASCOJSON.ResultCodes
+                    {
+                        ReturnCodeEnum = ReturnCodeEnum,
+                        StatusCodeEnum = StatusCodeEnum,
+                        ReturnCode = SReturnCode,
+                        StatusCode = SStatusCode
+                    },
+                    ErrorStack = new SVASCOJSON.ErrorStack
+                    {
+                        Errors = new List<SVASCOJSON.Error>
+                        {
+                            new SVASCOJSON.Error
+                            {
+                                ErrorCode = ErrorCode,
+                                ErrorDesc = ErrorDesc
+                            }
+                        }
+
+                    }
+                }
+            };
+            return root.ToString();
         }
         public string Vasco(string Req)
         {
